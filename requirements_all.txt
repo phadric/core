@@ -706,6 +706,9 @@ getmac==0.8.2
 # homeassistant.components.gios
 gios==2.1.0
 
+# homeassistant.components.sharkiq
+git+https://github.com/phadric/sharkiq.git@0.2.0#sharkiqpy==0.2.0
+
 # homeassistant.components.gitter
 gitterpy==0.1.7
 
@@ -2122,9 +2125,6 @@ sense_energy==0.10.3
 
 # homeassistant.components.sentry
 sentry-sdk==1.5.8
-
-# homeassistant.components.sharkiq
-sharkiqpy==0.1.8
 
 # homeassistant.components.aquostv
 sharp_aquos_rc==0.3.2

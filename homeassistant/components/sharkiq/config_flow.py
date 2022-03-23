@@ -6,6 +6,7 @@ import asyncio
 import aiohttp
 import async_timeout
 from sharkiqpy import SharkIqAuthError, get_ayla_api
+from sharkiqpy.const import ENDPOINT_LIST
 import voluptuous as vol
 
 from homeassistant import config_entries, core, exceptions
@@ -15,7 +16,11 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from .const import DOMAIN, LOGGER
 
 SHARKIQ_SCHEMA = vol.Schema(
-    {vol.Required(CONF_USERNAME): str, vol.Required(CONF_PASSWORD): str}
+    {
+        vol.Required(CONF_USERNAME): str,
+        vol.Required(CONF_PASSWORD): str,
+        vol.Required("EndpointRegion"): vol.In(ENDPOINT_LIST),
+    }
 )
 
 
@@ -24,6 +29,7 @@ async def validate_input(hass: core.HomeAssistant, data):
     ayla_api = get_ayla_api(
         username=data[CONF_USERNAME],
         password=data[CONF_PASSWORD],
+        region=data["EndpointRegion"],
         websession=async_get_clientsession(hass),
     )
 
