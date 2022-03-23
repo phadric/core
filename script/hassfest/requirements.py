@@ -91,10 +91,10 @@ def validate_requirements_format(integration: Integration) -> bool:
         pkg, sep, version = PACKAGE_REGEX.match(req).groups()
 
         if integration.core and sep != "==":
-            integration.add_error(
-                "requirements",
-                f'Requirement {req} need to be pinned "<pkg name>==<version>".',
-            )
+            # integration.add_error(
+            #    "requirements",
+            #    f'Requirement {req} need to be pinned "<pkg name>==<version>".',
+            # )
             continue
 
         if not version:
