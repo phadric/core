@@ -65,6 +65,7 @@ ATTR_ERROR_MSG = "last_error_message"
 ATTR_LOW_LIGHT = "low_light"
 ATTR_RECHARGE_RESUME = "recharge_and_resume"
 ATTR_RSSI = "rssi"
+ATTR_ROOM_LIST = "room_list"
 
 
 async def async_setup_entry(
@@ -99,8 +100,22 @@ class SharkVacuumEntity(CoordinatorEntity[SharkIqUpdateCoordinator], StateVacuum
         raise NotImplementedError()
 
     def send_command(self, command, params=None, **kwargs):
-        """Send a command to the vacuum. Not yet implemented."""
-        raise NotImplementedError()
+        """Send a command to the vacuum."""
+        if command == "clean_rooms":
+            rooms = []
+            for room in params:
+                LOGGER.debug("Got room %s", room)
+                if room in self.room_list:
+                    rooms.append(room)
+                else:
+                    LOGGER.warning("Unknown Room: %s", room)
+            if rooms:
+                LOGGER.debug("sending command to clean %s", rooms)
+                self.sharkiq.clean_rooms(rooms)
+            else:
+                LOGGER.warning("No Rooms to clean, doing nothing")
+        else:
+            LOGGER.error('Command "%s" not implemented', command)
 
     @property
     def is_online(self) -> bool:
@@ -146,6 +161,11 @@ class SharkVacuumEntity(CoordinatorEntity[SharkIqUpdateCoordinator], StateVacuum
     def error_code(self) -> int | None:
         """Return the last observed error code (or None)."""
         return self.sharkiq.error_code
+
+    @property
+    def room_list(self) -> list | None:
+        """Return the last observed error code (or None)."""
+        return self.sharkiq.get_room_list()
 
     @property
     def error_message(self) -> str | None:
@@ -264,5 +284,6 @@ class SharkVacuumEntity(CoordinatorEntity[SharkIqUpdateCoordinator], StateVacuum
             ATTR_ERROR_MSG: self.sharkiq.error_text,
             ATTR_LOW_LIGHT: self.low_light,
             ATTR_RECHARGE_RESUME: self.recharge_resume,
+            ATTR_ROOM_LIST: self.room_list,
         }
         return data
